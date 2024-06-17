@@ -8,6 +8,8 @@ import java.util.Random;
 public class Main {
     private static enum GameState {WON, LOST, PLAYING}
     private static GameState currentState;
+    private static int start = 1;
+    private static int end = 100;
 
     public static void main(String[] args) {
         Random random = new Random();
@@ -15,11 +17,11 @@ public class Main {
         int total = 0;
         int score = 0;
         do {
-            int target = random.nextInt(0, 99);
+            int target = random.nextInt(start -1, end - 1);
+            System.out.println("Secret number is between " + start + " to " + end + ".");
             System.out.println("Secret number has been generated");
             currentState = GameState.PLAYING;
             int guesses = 5;
-            int count = 0;
             System.out.println("You have " + guesses + " chances to guess.");
             String input;
             do {
@@ -35,7 +37,7 @@ public class Main {
                     }
                 } catch (IOException | IllegalArgumentException e) {
                     if (e instanceof IllegalArgumentException) {
-                        System.out.println("Your guess is not a number");
+                        System.out.println("Your guess is not a number.");
                     }
                 }
                 if (currentState == GameState.PLAYING && guesses == 0) {
@@ -48,16 +50,27 @@ public class Main {
             } while (true);
             System.out.println("You " + currentState + " the game!");
             try {
-                System.out.println("Do you want to play again? (Yes/n)");
-                input = inputReader.readLine().toLowerCase();
-                if (input.equals("y") || input.equals("yes")) {
-                    if (currentState == GameState.WON) {
-                        score++;
-                    }
-                    total++;
-                } else if (input.equals("n") || input.equals("no")) {
-                    break;
+                if (currentState == GameState.WON) {
+                    score++;
                 }
+                total++;
+                if (total != 1) {
+                    System.out.println("Score: " + score + " out of " + total + " Games.");
+                }
+                int quit = 0;
+                while (quit == 0) {
+                    System.out.println("Do you want to play again? (Yes/n)");
+                    input = inputReader.readLine().toLowerCase();
+                    if (input.equals("y") || input.equals("yes")) {
+                        quit = 1;
+                    } else if (input.equals("n") || input.equals("no")) {
+                        quit = 2;
+                        break;
+                    } else {
+                        System.out.println("Please enter YES or no");
+                    }
+                }
+                if (quit==2) break;
             } catch (IOException e){
                 break;
             }
