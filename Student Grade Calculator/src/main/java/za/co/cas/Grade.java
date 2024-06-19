@@ -17,14 +17,11 @@ public class Grade {
             int pick = random.nextInt(Subject.values().length);
             newSubject = Subject.values()[pick];
             double grade = random.nextDouble() * 100;
-            if (!marks.containsKey(newSubject)) {
-                marks.put(newSubject, grade);
-            }
+            addSubject(newSubject, grade);
         } while (marks.size() < number);
-        setAverage();
     }
 
-    private void setAverage() {
+    private void calculateAll() {
         double sum = 0;
         int count = 0;
         int total = 0;
@@ -39,8 +36,6 @@ public class Grade {
         this.sum = sum;
         this.total = total;
         this.grade = (average / 100) * 5;
-
-//        return this.average;
     }
 
     public boolean addSubject(Subject subject) {
@@ -48,6 +43,7 @@ public class Grade {
             return false;
         else {
             marks.put(subject, 0d);
+            calculateAll();
             return true;
         }
     }
@@ -57,23 +53,46 @@ public class Grade {
             return false;
         else {
             marks.put(subject, grade);
+            calculateAll();
+            return true;
+        }
+    }
+    public boolean addMark(Subject subject, double grade) {
+        if (!marks.containsKey(subject))
+            return false;
+        else {
+            marks.put(subject, grade);
+            calculateAll();
             return true;
         }
     }
 
+    public double getGrade() {
+        return grade;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
     public String tabulate() {
         StringBuilder output = new StringBuilder();
-        output.append("|           Grades          |        |\n");
-        output.append("--------------------------------------\n");
+        output.append("┌───────────────────────────┬─────────┐\n");
+        output.append("│           Grades          │         │\n");
+        output.append("├───────────────────────────┼─────────┤\n");
         for (Subject subject : marks.keySet()) {
-            output.append(String.format("| %-25s | %6s |\n", subject, String.format("%3d%s" , marks.get(subject).intValue(), '%')));
+            output.append(String.format("│ %-25s │ %7s │\n", subject, String.format("%3d%s" , marks.get(subject).intValue(), '%')));
         }
-        output.append("--------------------------------------\n");
-        output.append(String.format("| %25s | %6.2f |\n", "Score", sum));
-        output.append(String.format("| %25s | %6.2f |\n", "Total", total));
-        output.append(String.format("| %25s | %6.2f |\n", "Average", average));
-        output.append(String.format("| %25s | %6.2f |\n", "Grade", grade));
-        output.append("--------------------------------------\n");
+        output.append("├───────────────────────────┼─────────┤\n");
+        output.append(String.format("│ %25s │ %7.2f │\n", "Score", sum));
+        output.append(String.format("│ %25s │ %7.2f │\n", "Total", total));
+        output.append(String.format("│ %25s │ %7.2f │\n", "Average", average));
+        output.append(String.format("│ %25s │ %7.2f │\n", "Grade", grade));
+        output.append("└───────────────────────────┴─────────┘\n");
 
 
 
