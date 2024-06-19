@@ -11,6 +11,8 @@
     <modules>
         <module>Number Game</module>
         <module>Currency Converter</module>
+        <module>Student Management System</module>
+        <module>Student Grade Calculator</module>
     </modules>
 
     <properties>

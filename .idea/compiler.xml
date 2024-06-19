@@ -6,8 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="number_game" />
+        <module name="student_management_system" />
         <module name="currency_converter" />
+        <module name="number_game" />
+        <module name="student_grade_calculator" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
