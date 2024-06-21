@@ -103,23 +103,24 @@ public class Grade {
         return sum;
     }
 
-//    private HashMap<Subject, Double> getMarks() {
     private HashMap<String, Double> getMarks() {
         return marks;
     }
 
     public String tabulate() {
         StringBuilder output = new StringBuilder();
-        output.append("┌───────────────────────────┬─────────┐\n");
-        output.append("│           Grades          │         │\n");
-        output.append("├─────────┼───────────────────────────┤\n");
-        output.append(String.format("│ %7s │ %25s │\n", "Name", getName()));
-        output.append("├─────────┼───────────────────────────┤\n");
-//        for (Subject subject : getMarks().keySet()) {
-        for (String subject : getMarks().keySet()) {
-            output.append(String.format("│ %-25s │ %7s │\n", subject, String.format("%3d%s" , getMarks().get(subject).intValue(), '%')));
-        }
-        output.append("├───────────────────────────┼─────────┤\n");
+        output.append("┌─────────┬───────────────────────────┐\n");
+        output.append(String.format("│ %-7s │ %25s │\n", "Name", getName()));
+        output.append("├─────────┴───────────────────────────┤\n");
+        output.append("│                Grades               │\n");
+        if (!getMarks().keySet().isEmpty()) {
+            output.append("├───────────────────────────┬─────────┤\n");
+            for (String subject : getMarks().keySet()) {
+                output.append(String.format("│ %-25s │ %7s │\n", subject, String.format("%3d%s", getMarks().get(subject).intValue(), '%')));
+            }
+            output.append("├───────────────────────────┼─────────┤\n");
+        }else
+            output.append("├───────────────────────────┬─────────┤\n");
         output.append(String.format("│ %25s │ %7.2f │\n", "Score", getSum()));
         output.append(String.format("│ %25s │ %7.2f │\n", "Total", getTotal()));
         output.append(String.format("│ %25s │ %7.2f │\n", "Average", getAverage()));
