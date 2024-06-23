@@ -4,11 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
     private static final BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
     private static String[] name;
-    private static ArrayList<String> subjects;
+    private static ArrayList<Subject> subjects;
 
     public static void main(String[] args) {
         boolean done = false;
@@ -18,11 +19,9 @@ public class Main {
 //        fullName = getName(fullName);
 
         Grade grade = new Grade("Riri Momo");//fullName);
-        String subject;
+        Subject subject;
         subjects = new ArrayList<>() {{
-            for (Subject subject : Subject.values()) {
-                add(subject.name());
-            }
+            this.addAll(Arrays.asList(Subject.values()));
         }};
         double amount;
         int subjectNumber = getSubjectNumber();
@@ -47,7 +46,7 @@ public class Main {
                         System.out.printf("Average: %.2f%%%n", grade.getAverage());
                         break;
                     case "sum":
-                        System.out.printf("Sum: %.2f out of %.2f%n",grade.getTotal()*grade.getAverage(), grade.getTotal());
+                        System.out.printf("Sum: %.2f out of %.2f%n",grade.getSum(), grade.getTotal());
                         break;
                     case "grade":
                         System.out.printf("Grade: %.2f%n", grade.getGrade());
@@ -102,13 +101,12 @@ public class Main {
         return fullName;
     }
 
-    private static String getSubject() throws NullPointerException {
-        String subject;
+    private static Subject getSubject() throws NullPointerException {
         String input;
         do {
             try {
                 int i = 1;
-                for (String sub : subjects) {
+                for (Subject sub : subjects) {
                     System.out.printf("%d: %s%n", i, sub);
                     i++;
                 }
@@ -120,9 +118,9 @@ public class Main {
                 else if (input.equalsIgnoreCase("quit")) throw new NullPointerException();
                 else {
                     input = input.replaceFirst("\\s+", "_").toUpperCase();
-                    if (subjects.contains(input)) {
-                        subjects.remove(input);
-                        return input;
+                    if (subjects.contains(Subject.valueOf(input))) {
+                        subjects.remove(Subject.valueOf(input));
+                        return Subject.valueOf(input);
                     } else throw new IllegalArgumentException("Invalid subject, choose from the list.");
                 }
             } catch (IOException e) {
@@ -136,7 +134,7 @@ public class Main {
         } while (true);
     }
 
-    private static double getMark(String subject) {
+    private static double getMark(Subject subject) {
         String input;
         double amount;
         do {

@@ -5,8 +5,8 @@ import java.util.Random;
 
 public class Grade {
     private final String name;
-//    private final HashMap<Subject, Double> marks;
-    private final HashMap<String, Double> marks;
+    private final HashMap<Subject, Double> marks;
+//    private final HashMap<String, Double> marks;
     private double average;// = 0;
     private double grade;// = 0;
     private double sum;// = 0;
@@ -28,8 +28,8 @@ public class Grade {
             int pick = random.nextInt(Subject.values().length);
             newSubject = Subject.values()[pick];
             double grade = random.nextDouble() * 100;
-//            addSubject(newSubject, grade);
-            addSubject(newSubject.toString(), grade);
+            addSubject(newSubject, grade);
+//            addSubject(newSubject.toString(), grade);
         } while (getMarks().size() < number);
     }
 
@@ -37,8 +37,8 @@ public class Grade {
         double sum = 0;
         int count = 0;
         int total = 0;
-//        for (Subject key : getMarks().keySet()) {
-        for (String key : getMarks().keySet()) {
+        for (Subject key : getMarks().keySet()) {
+//        for (String key : getMarks().keySet()) {
             count++;
             sum += getMarks().get(key);
             total += 100;
@@ -51,29 +51,32 @@ public class Grade {
         this.grade = (getAverage() / 100) * 5;
     }
 
-//    public boolean addSubject(Subject subject) {
-    public boolean addSubject(String subject) {
+    public boolean addSubject(Subject subject) {
+//    public boolean addSubject(String subject) {
+        return addSubject(subject, 0d);
+    }
+
+    public boolean addSubject(Subject subject, double mark) {
+//    public boolean addSubject(String subject, double mark) {
         if (getMarks().containsKey(subject))
             return false;
         else {
-            getMarks().put(subject, 0d);
+            getMarks().put(subject, mark);
             calculateAll();
             return true;
         }
     }
 
-//    public boolean addSubject(Subject subject, double grade) {
-    public boolean addSubject(String subject, double grade) {
-        if (getMarks().containsKey(subject))
-            return false;
-        else {
-            getMarks().put(subject, grade);
+    public boolean removeSubject(Subject subject) {
+//    public boolean removeSubject(String subject) {
+        if (getMarks().containsKey(subject)) {
+            this.marks.remove(subject);
             calculateAll();
             return true;
-        }
+        } else return false;
     }
-//    public boolean addMark(Subject subject, double grade) {
-    public boolean addMark(String subject, double grade) {
+    public boolean addMark(Subject subject, double grade) {
+//    public boolean addMark(String subject, double grade) {
         if (!getMarks().containsKey(subject))
             return false;
         else {
@@ -99,11 +102,11 @@ public class Grade {
         return total;
     }
 
-    private double getSum() {
+    public double getSum() {
         return sum;
     }
 
-    private HashMap<String, Double> getMarks() {
+    private HashMap<Subject, Double> getMarks() {
         return marks;
     }
 
@@ -115,8 +118,8 @@ public class Grade {
         output.append("│                Grades               │\n");
         if (!getMarks().keySet().isEmpty()) {
             output.append("├───────────────────────────┬─────────┤\n");
-            for (String subject : getMarks().keySet()) {
-                output.append(String.format("│ %-25s │ %7s │\n", subject, String.format("%3d%s", getMarks().get(subject).intValue(), '%')));
+            for (Subject subject : getMarks().keySet()) {
+                output.append(String.format("│ %-25s │ %7s │\n", subject.name(), String.format("%3d%s", getMarks().get(subject).intValue(), '%')));
             }
             output.append("├───────────────────────────┼─────────┤\n");
         }else
