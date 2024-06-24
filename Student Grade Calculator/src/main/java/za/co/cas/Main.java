@@ -14,11 +14,11 @@ public class Main {
     public static void main(String[] args) {
         boolean done = false;
         String input;
-        String fullName = "";
+        String fullName = "Riri Momo";
         name = new String[0];
 //        fullName = getName(fullName);
 
-        Grade grade = new Grade("Riri Momo");//fullName);
+        Grade grade = new Grade(fullName);
         Subject subject;
         subjects = new ArrayList<>() {{
             this.addAll(Arrays.asList(Subject.values()));
@@ -30,8 +30,7 @@ public class Main {
                 subject = getSubject();
                 amount = getMark(subject);
                 grade.addSubject(subject, amount);
-            } catch (NullPointerException e) {
-                //
+            } catch (NullPointerException ignored) {
             }
         }
         do {
@@ -55,19 +54,19 @@ public class Main {
                         System.out.println(grade.tabulate());
                         break;
                     case "help":
-                        String help = "average - shows your average.\n" +
-                                "grades - shows a table of your results.\n" +
-                                "grade - shows your grade.\n" +
-                                "help - shows commands available.\n" +
-                                "quit - exit the app.\n" +
-                                "sum - sum of all grades. Eg. 43 out of 60.";
+                        String help = """
+                                average - shows your average.
+                                grades - shows a table of your results.
+                                grade - shows your grade.
+                                help - shows commands available.
+                                quit - exit the app.
+                                sum - sum of all grades. Eg. 43 out of 60.""";
                         System.out.println(help);
                         break;
                     default:
                         System.out.printf("Doing %s%n", input);
                 }
-            } catch (IOException e) {
-                continue;
+            } catch (IOException ignored) {
             }
         } while (!done);
     }
@@ -86,19 +85,6 @@ public class Main {
             System.out.println(e.getMessage());
         }
         return 0;
-    }
-
-    private static String getName(String fullName){
-        do {
-            try {
-                System.out.print("Enter your Full Name: ");
-                fullName = inputReader.readLine().strip();
-                name = fullName.split(" ");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        } while (name.length < 2);
-        return fullName;
     }
 
     private static Subject getSubject() throws NullPointerException {
@@ -123,13 +109,10 @@ public class Main {
                         return Subject.valueOf(input);
                     } else throw new IllegalArgumentException("Invalid subject, choose from the list.");
                 }
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("Please choose a number or subject in the list.");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-                continue;
             }
         } while (true);
     }
@@ -148,11 +131,8 @@ public class Main {
                     if (amount < 0 || amount > 100) throw new IllegalArgumentException("Enter a grade between 0 - 100");
                     break;
                 }
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 System.out.println(e.getMessage());
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-                continue;
             }
         } while (true);
         return amount;
