@@ -10,24 +10,22 @@ public class Main {
     private static GameState currentState;
     private static int start = 1;
     private static int end = 100;
+    private static Score gameScore;
 
     public static void main(String[] args) {
         Random random = new Random();
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
-        int total = 0;
-        int score = 0;
+        gameScore = new Score(0,0);
         do {
             int target = random.nextInt(start -1, end - 1);
-            System.out.println("Secret number is between " + start + " to " + end + ".");
-            System.out.println("Secret number has been generated");
+            System.out.println("Secret number, between " + start + " and " + end + ", has been generated");
             currentState = GameState.PLAYING;
             int guesses = 5;
             System.out.println("You have " + guesses + " chances to guess.");
-            String input;
             do {
                 try {
                     System.out.println("Enter you guess:");
-                    input = inputReader.readLine();
+                    String input = inputReader.readLine();
                     if (!input.matches("\\d+")) {
                         guesses--;
                         throw new IllegalArgumentException();
@@ -50,31 +48,38 @@ public class Main {
             } while (true);
             System.out.println("You " + currentState + " the game!");
             try {
+                int total = gameScore.total();
+                int score = gameScore.score();
                 if (currentState == GameState.WON) {
                     score++;
                 }
-                total++;
+                gameScore = new Score(score, total++);
                 if (total != 1) {
-                    System.out.println("Score: " + score + " out of " + total + " Games.");
+                    System.out.println("Score: " + gameScore.score() + " out of " + gameScore.total() + " Games.");
                 }
-                int quit = 0;
-                while (quit == 0) {
-                    System.out.println("Do you want to play again? (Yes/n)");
-                    input = inputReader.readLine().toLowerCase();
-                    if (input.equals("y") || input.equals("yes")) {
-                        quit = 1;
-                    } else if (input.equals("n") || input.equals("no")) {
-                        quit = 2;
-                        break;
-                    } else {
-                        System.out.println("Please enter YES or no");
-                    }
-                }
-                if (quit==2) break;
+                if (getQuit(inputReader) == 2) break;
             } catch (IOException e){
                 break;
             }
         } while (true);
+    }
+
+    private static int getQuit(BufferedReader inputReader) throws IOException {
+        String input;
+        int quit=0;
+        while (quit == 0) {
+            System.out.println("Do you want to play again? (Yes/n)");
+            input = inputReader.readLine().toLowerCase();
+            if (input.equals("y") || input.equals("yes")) {
+                quit = 1;
+            } else if (input.equals("n") || input.equals("no")) {
+                quit = 2;
+                break;
+            } else {
+                System.out.println("Please enter YES or no");
+            }
+        }
+        return quit;
     }
 
     private static GameState testGuess(int target, int guesses, int guess) {
@@ -88,5 +93,12 @@ public class Main {
             System.out.println("Correct");
             return GameState.WON;
         }
+    }
+}
+
+record Score(int score, int total) {
+    public Score(int score, int total) {
+        this.total = total;
+        this.score = score;
     }
 }
