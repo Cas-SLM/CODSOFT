@@ -6,33 +6,29 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 public class Main {
-    private static enum GameState {WON, LOST, PLAYING}
+    private enum GameState {WON, LOST, PLAYING}
     private static GameState currentState;
     private static int start = 1;
     private static int end = 100;
     private static Score gameScore;
+    private static BufferedReader inputReader;// = new BufferedReader(new InputStreamReader(System.in));
+    private static int target;
 
     public static void main(String[] args) {
         Random random = new Random();
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
+        inputReader = new BufferedReader(new InputStreamReader(System.in));
         gameScore = new Score(0,0);
         do {
-            int target = random.nextInt(start -1, end - 1);
+            target = random.nextInt(start -1, end - 1);
             System.out.println("Secret number, between " + start + " and " + end + ", has been generated");
             currentState = GameState.PLAYING;
             int guesses = 5;
             System.out.println("You have " + guesses + " chances to guess.");
             do {
                 try {
-                    System.out.println("Enter you guess:");
+                    System.out.println("Enter your guess:");
                     String input = inputReader.readLine();
-                    if (!input.matches("\\d+")) {
-                        guesses--;
-                        throw new IllegalArgumentException();
-                    } else {
-                        guesses--;
-                        currentState = testGuess(target, guesses, Integer.parseInt(input));
-                    }
+                    guesses = takeGuess(guesses, input);
                 } catch (IOException | IllegalArgumentException e) {
                     if (e instanceof IllegalArgumentException) {
                         System.out.println("Your guess is not a number.");
@@ -53,8 +49,9 @@ public class Main {
                 if (currentState == GameState.WON) {
                     score++;
                 }
-                gameScore = new Score(score, total++);
-                if (total != 1) {
+                total++;
+                gameScore = new Score(score, total);
+                if (gameScore.total() != 1) {
                     System.out.println("Score: " + gameScore.score() + " out of " + gameScore.total() + " Games.");
                 }
                 if (getQuit(inputReader) == 2) break;
@@ -62,6 +59,16 @@ public class Main {
                 break;
             }
         } while (true);
+    }
+
+    private static int takeGuess(int guesses, String input) {
+        if (!input.matches("\\d+")) {
+            throw new IllegalArgumentException();
+        } else {
+            guesses--;
+            currentState = assessGuess(target, Integer.parseInt(input));
+        }
+        return guesses;
     }
 
     private static int getQuit(BufferedReader inputReader) throws IOException {
@@ -82,7 +89,7 @@ public class Main {
         return quit;
     }
 
-    private static GameState testGuess(int target, int guesses, int guess) {
+    private static GameState assessGuess(int target, int guess) {
         if (guess < target) {
             System.out.println("Too Low!");
             return GameState.PLAYING;
