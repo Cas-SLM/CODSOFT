@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Grade {
     private final String name;
-    private final HashMap<Subject, Double> marks;
+    private final HashMap<Subject, Integer> marks;
 //    private final HashMap<String, Double> marks;
     private double average;// = 0;
     private double grade;// = 0;
@@ -61,7 +61,7 @@ public class Grade {
         if (getMarks().containsKey(subject))
             return false;
         else {
-            getMarks().put(subject, mark);
+            getMarks().put(subject, (int) mark);
             calculateAll();
             return true;
         }
@@ -80,10 +80,18 @@ public class Grade {
         if (!getMarks().containsKey(subject))
             return false;
         else {
-            getMarks().put(subject, grade);
+            getMarks().put(subject, (int) grade);
             calculateAll();
             return true;
         }
+    }
+
+    public boolean hasSubject(Subject subject) {
+        return getMarks().containsKey(subject);
+    }
+
+    public int getMark(Subject subject) {
+        return getMarks().get(subject);
     }
 
     public String getName() {
@@ -106,7 +114,7 @@ public class Grade {
         return sum;
     }
 
-    private HashMap<Subject, Double> getMarks() {
+    private HashMap<Subject, Integer> getMarks() {
         return marks;
     }
 
