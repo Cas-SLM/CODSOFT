@@ -9,11 +9,12 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 
 class StudFrame extends JFrame {
+    private Student student;
     private final HashMap<Subject, JCheckBox> subjectCheckBox;
     private final HashMap<Subject, JSpinner> subjectSpinner;
 
-    public StudFrame(Grade grades) {
-        setTitle("Student");
+    public StudFrame(Grade grades, String name) {
+        setTitle("Student - %s".formatted(name));
         setSize(550, 260);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -54,6 +55,11 @@ class StudFrame extends JFrame {
         add(subjects, BorderLayout.NORTH);
         add(doneBtn, BorderLayout.SOUTH);
 
+    }
+
+    public StudFrame(Student student, Grade grades, String name) {
+        this(grades, name);
+        this.student = student;
     }
 
     private JButton getjButton(StudFrame frame, Grade grades) {
