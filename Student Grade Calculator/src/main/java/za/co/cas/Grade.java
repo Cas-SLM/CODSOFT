@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Grade {
 //    private final String name;
-    private final Map<Subject, Integer> subjects;
+    private Map<Subject, Integer> subjectsAndMarks;
     private double average;
     private double grade;
     private double sum;
@@ -17,7 +17,7 @@ public class Grade {
 //    public Grade(String fullname) {
     public Grade() {
 //        this.name = fullname;
-        this.subjects = new HashMap<>();
+        this.subjectsAndMarks = new HashMap<>();
         this.average = 0;
         this.grade = 0;
         this.sum = 0;
@@ -52,10 +52,11 @@ public class Grade {
 
     public void removeSubject(Subject subject) {
         if (getSubjectsAndMarks().containsKey(subject)) {
-            this.subjects.remove(subject);
+            this.subjectsAndMarks.remove(subject);
             calculateAll();
         }
     }
+
     public void addMark(Subject subject, double grade) {
         if (getSubjectsAndMarks().containsKey(subject)) {
             getSubjectsAndMarks().put(subject, (int) grade);
@@ -72,11 +73,15 @@ public class Grade {
     }
 
     public Map<Subject, Integer> getSubjectsAndMarks() {
-        return subjects;
+        return subjectsAndMarks;
     }
 
-    public ArrayList<Subject> getSubjects() {
-        ArrayList<Subject> subjects1 = new ArrayList<>(subjects.keySet());
+    public void setSubjectsAndMarks(Map<Subject, Integer> subjects) {
+        this.subjectsAndMarks = subjects;
+    }
+
+    public ArrayList<Subject> Subjects() {
+        ArrayList<Subject> subjects1 = new ArrayList<>(subjectsAndMarks.keySet());
         subjects1.sort(new Comparator<Subject>() {
             @Override
             public int compare(Subject subject1, Subject subject2) {
@@ -90,16 +95,32 @@ public class Grade {
         return grade;
     }
 
+    public void setGrade(double grade) {
+        this.grade = grade;
+    }
+
     public double getAverage() {
         return average;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
     }
 
     public double getTotal() {
         return total;
     }
 
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
     public double getSum() {
         return sum;
+    }
+
+    public void setSum(double sum) {
+        this.sum = sum;
     }
 
     public void save() {
