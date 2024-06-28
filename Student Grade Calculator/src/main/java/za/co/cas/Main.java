@@ -18,7 +18,8 @@ public class Main {
         name = new String[0];
 //        fullName = getName(fullName);
 
-        Grade grade = new Grade(fullName);
+//        Grade grade = new Grade(fullName);
+        Grade grade = new Grade();
         Subject subject;
         subjects = new ArrayList<>() {{
             this.addAll(Arrays.asList(Subject.values()));
@@ -53,6 +54,12 @@ public class Main {
                     case "grades":
                         System.out.println(grade.tabulate());
                         break;
+                    case "save":
+                        grade.save();
+                        break;
+                    case "json":
+                        System.out.println(grade.toJSON());
+                        break;
                     case "help":
                         String help = """
                                 average - shows your average.
@@ -60,7 +67,8 @@ public class Main {
                                 grade - shows your grade.
                                 help - shows commands available.
                                 quit - exit the app.
-                                sum - sum of all grades. Eg. 43 out of 60.""";
+                                sum - sum of all grades. Eg. 43 out of 60.
+                                save - saves to json file""";
                         System.out.println(help);
                         break;
                     default:

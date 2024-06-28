@@ -1,46 +1,37 @@
 package za.co.cas;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.Map;
 
 public class Grade {
-    private final String name;
-    private final HashMap<Subject, Integer> marks;
-//    private final HashMap<String, Double> marks;
-    private double average;// = 0;
-    private double grade;// = 0;
-    private double sum;// = 0;
-    private double total;// = 0;
+//    private final String name;
+    private final Map<Subject, Integer> subjects;
+    private double average;
+    private double grade;
+    private double sum;
+    private double total;
+    private final Mapper mapper;
 
-    public Grade(String fullname) {
-        this.name = fullname;
-        this.marks = new HashMap<>();
+//    public Grade(String fullname) {
+    public Grade() {
+//        this.name = fullname;
+        this.subjects = new HashMap<>();
         this.average = 0;
         this.grade = 0;
         this.sum = 0;
         this.total = 0;
-    }
-
-    public void randomSubjects(int number) {
-        Random random = new Random();
-        Subject newSubject;
-        do {
-            int pick = random.nextInt(Subject.values().length);
-            newSubject = Subject.values()[pick];
-            double grade = random.nextDouble() * 100;
-            addSubject(newSubject, grade);
-//            addSubject(newSubject.toString(), grade);
-        } while (getMarks().size() < number);
+        this.mapper = new Mapper("/home/cas/Documents/CODSOFT/Student Grade Calculator/src/main/java/za/co/cas/Grades.json");
     }
 
     private void calculateAll() {
         double sum = 0;
         int count = 0;
         int total = 0;
-        for (Subject key : getMarks().keySet()) {
-//        for (String key : getMarks().keySet()) {
+        for (Subject key : getSubjectsAndMarks().keySet()) {
             count++;
-            sum += getMarks().get(key);
+            sum += getSubjectsAndMarks().get(key);
             total += 100;
         }
 
@@ -51,51 +42,48 @@ public class Grade {
         this.grade = (getAverage() / 100) * 5;
     }
 
-    public boolean addSubject(Subject subject) {
-//    public boolean addSubject(String subject) {
-        return addSubject(subject, 0d);
+    public void addSubject(Subject subject, double mark) {
+        if (!getSubjectsAndMarks().containsKey(subject)) {
+            getSubjectsAndMarks().put(subject, (int) mark);
+            calculateAll();
+        }
+
     }
 
-    public boolean addSubject(Subject subject, double mark) {
-//    public boolean addSubject(String subject, double mark) {
-        if (getMarks().containsKey(subject))
-            return false;
-        else {
-            getMarks().put(subject, (int) mark);
+    public void removeSubject(Subject subject) {
+        if (getSubjectsAndMarks().containsKey(subject)) {
+            this.subjects.remove(subject);
             calculateAll();
-            return true;
         }
     }
-
-    public boolean removeSubject(Subject subject) {
-//    public boolean removeSubject(String subject) {
-        if (getMarks().containsKey(subject)) {
-            this.marks.remove(subject);
+    public void addMark(Subject subject, double grade) {
+        if (getSubjectsAndMarks().containsKey(subject)) {
+            getSubjectsAndMarks().put(subject, (int) grade);
             calculateAll();
-            return true;
-        } else return false;
-    }
-    public boolean addMark(Subject subject, double grade) {
-//    public boolean addMark(String subject, double grade) {
-        if (!getMarks().containsKey(subject))
-            return false;
-        else {
-            getMarks().put(subject, (int) grade);
-            calculateAll();
-            return true;
         }
     }
 
     public boolean hasSubject(Subject subject) {
-        return getMarks().containsKey(subject);
+        return getSubjectsAndMarks().containsKey(subject);
     }
 
     public int getMark(Subject subject) {
-        return getMarks().get(subject);
+        return getSubjectsAndMarks().get(subject);
     }
 
-    public String getName() {
-        return name;
+    public Map<Subject, Integer> getSubjectsAndMarks() {
+        return subjects;
+    }
+
+    public ArrayList<Subject> getSubjects() {
+        ArrayList<Subject> subjects1 = new ArrayList<>(subjects.keySet());
+        subjects1.sort(new Comparator<Subject>() {
+            @Override
+            public int compare(Subject subject1, Subject subject2) {
+                return subject1.compareTo(subject2);
+            }
+        });
+        return subjects1;
     }
 
     public double getGrade() {
@@ -114,29 +102,34 @@ public class Grade {
         return sum;
     }
 
-    private HashMap<Subject, Integer> getMarks() {
-        return marks;
+    public void save() {
+        this.mapper.save(this);
+    }
+
+    public String toJSON() {
+        return this.mapper.map(this);
     }
 
     public String tabulate() {
         StringBuilder output = new StringBuilder();
-        output.append("┌─────────┬───────────────────────────┐\n");
-        output.append(String.format("│ %-7s │ %25s │\n", "Name", getName()));
-        output.append("├─────────┴───────────────────────────┤\n");
+        output.append("┌──────────────────────────────────────────┐\n");
+//        output.append("┌─────────┬───────────────────────────┐\n");
+//        output.append(String.format("│ %-7s │ %25s │\n", "Name", getName()));
+//        output.append("├─────────┴───────────────────────────┤\n");
         output.append("│                Grades               │\n");
-        if (!getMarks().keySet().isEmpty()) {
-            output.append("├───────────────────────────┬─────────┤\n");
-            for (Subject subject : getMarks().keySet()) {
-                output.append(String.format("│ %-25s │ %7s │\n", subject.name(), String.format("%3d%s", getMarks().get(subject).intValue(), '%')));
+        if (!getSubjectsAndMarks().keySet().isEmpty()) {
+            output.append("├────────────────────────────────┬─────────┤\n");
+            for (Subject subject : getSubjectsAndMarks().keySet()) {
+                output.append(String.format("│ %-30s │ %7s │\n", subject.name(), String.format("%3d%s", getSubjectsAndMarks().get(subject), '%')));
             }
-            output.append("├───────────────────────────┼─────────┤\n");
+            output.append("├────────────────────────────────┼─────────┤\n");
         }else
-            output.append("├───────────────────────────┬─────────┤\n");
-        output.append(String.format("│ %25s │ %7.2f │\n", "Score", getSum()));
-        output.append(String.format("│ %25s │ %7.2f │\n", "Total", getTotal()));
-        output.append(String.format("│ %25s │ %7.2f │\n", "Average", getAverage()));
-        output.append(String.format("│ %25s │ %7.2f │\n", "Grade", getGrade()));
-        output.append("└───────────────────────────┴─────────┘\n");
+            output.append("├────────────────────────────────┬─────────┤\n");
+        output.append(String.format("│ %30s │ %7.2f │\n", "Score", getSum()));
+        output.append(String.format("│ %30s │ %7.2f │\n", "Total", getTotal()));
+        output.append(String.format("│ %30s │ %7.2f │\n", "Average", getAverage()));
+        output.append(String.format("│ %30s │ %7.2f │\n", "Grade", getGrade()));
+        output.append("└────────────────────────────────┴─────────┘\n");
 
 
 
@@ -150,7 +143,7 @@ public class Grade {
                 "average=" + getAverage() +
                 ", grade=" + getGrade() +
                 ", total=" + getTotal() +
-                ", marks=" + getMarks() +
+                ", marks=" + getSubjectsAndMarks() +
                 '}';
     }
 }

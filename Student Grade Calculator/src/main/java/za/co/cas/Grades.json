@@ -1,0 +1,11 @@
+{
+  "name" : "Riri Momo",
+  "marks" : {
+    "CHEMISTRY" : 34,
+    "PHYSICAL_SCIENCE" : 34
+  },
+  "average" : 34.0,
+  "grade" : 1.7000000000000002,
+  "sum" : 68.0,
+  "total" : 200.0
+}
