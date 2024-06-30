@@ -6,30 +6,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Grade {
-//    private final String name;
     private Map<Subject, Integer> subjectsAndMarks;
     private double average;
     private double grade;
     private double sum;
     private double total;
     private final Mapper mapper;
+    private final Comparator<Subject> comparator;
 
-//    public Grade(String fullname) {
     public Grade() {
-//        this.name = fullname;
         this.subjectsAndMarks = new HashMap<>();
         this.average = 0;
         this.grade = 0;
         this.sum = 0;
         this.total = 0;
         this.mapper = new Mapper("/home/cas/Documents/CODSOFT/Student Grade Calculator/src/main/java/za/co/cas/Grades.json");
+        this.comparator = Comparator.comparing(Enum::name);
     }
 
     private void calculateAll() {
         double sum = 0;
         int count = 0;
         int total = 0;
-        for (Subject key : getSubjectsAndMarks().keySet()) {
+        for (Subject key : Subjects()) {
             count++;
             sum += getSubjectsAndMarks().get(key);
             total += 100;
@@ -69,25 +68,27 @@ public class Grade {
     }
 
     public int getMark(Subject subject) {
-        return getSubjectsAndMarks().get(subject);
+        return getSubjectsAndMarks().getOrDefault(subject, 0);
     }
 
     public Map<Subject, Integer> getSubjectsAndMarks() {
         return subjectsAndMarks;
     }
 
-    public void setSubjectsAndMarks(Map<Subject, Integer> subjects) {
-        this.subjectsAndMarks = subjects;
+    public void setSubjectsAndMarks(Map<String, Integer> subjects) {
+        Map<Subject,  Integer> newGrades = new HashMap<>();
+        for (String key : subjects.keySet()) {
+            try {
+                newGrades.put(Subject.valueOf(key), subjects.get(key));
+            } catch (IllegalArgumentException ignored) {}
+        }
+        this.subjectsAndMarks = newGrades;
+        calculateAll();
     }
 
     public ArrayList<Subject> Subjects() {
         ArrayList<Subject> subjects1 = new ArrayList<>(subjectsAndMarks.keySet());
-        subjects1.sort(new Comparator<Subject>() {
-            @Override
-            public int compare(Subject subject1, Subject subject2) {
-                return subject1.compareTo(subject2);
-            }
-        });
+        subjects1.sort(comparator);
         return subjects1;
     }
 
@@ -138,9 +139,10 @@ public class Grade {
 //        output.append(String.format("│ %-7s │ %25s │\n", "Name", getName()));
 //        output.append("├─────────┴───────────────────────────┤\n");
         output.append("│                Grades               │\n");
-        if (!getSubjectsAndMarks().keySet().isEmpty()) {
+        ArrayList<Subject> subjects = Subjects();
+        if (!subjects.isEmpty()) {
             output.append("├────────────────────────────────┬─────────┤\n");
-            for (Subject subject : getSubjectsAndMarks().keySet()) {
+            for (Subject subject : subjects) {
                 output.append(String.format("│ %-30s │ %7s │\n", subject.name(), String.format("%3d%s", getSubjectsAndMarks().get(subject), '%')));
             }
             output.append("├────────────────────────────────┼─────────┤\n");
